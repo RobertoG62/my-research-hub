@@ -3,203 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Deep Research Hub | מחובר לענן</title>
+    <title>AI Deep Research | גרסה מהירה</title>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        body { font-family: 'Rubik', sans-serif; background: radial-gradient(at top left, #e0f2fe 0%, #f0f9ff 100%); min-height: 100vh; color: #1e293b; }
-        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); transition: all 0.3s ease; }
-        .glass-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15); }
-        .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transition: all 0.3s ease; }
-        .btn-primary:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
+        body { font-family: 'Rubik', sans-serif; background: #f0f4f8; min-height: 100vh; color: #334155; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); padding: 24px; }
+        .btn { transition: all 0.2s; }
+        .btn:hover { transform: translateY(-2px); }
         .fa-arrow-left { transform: rotate(180deg); }
-        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #3498db; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* עיצוב גלילה */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 max-w-6xl mx-auto">
 
-    <header class="max-w-7xl mx-auto mb-8 flex justify-between items-center bg-white/60 p-4 rounded-2xl shadow-sm backdrop-blur-md">
-        <div class="flex items-center gap-3">
-            <div class="inline-flex items-center justify-center p-2 bg-blue-100 rounded-full">
-                <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800">Deep Research Hub</h1>
-                <p class="text-xs text-slate-500">Secure & Connected V2.1</p>
-            </div>
+    <header class="text-center mb-10">
+        <div class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-full shadow-lg mb-4">
+            <i class="fas fa-brain text-white text-3xl"></i>
         </div>
-        
-        <div id="authSection">
-            <button id="loginBtn" onclick="window.googleLogin()" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg flex items-center gap-2 transition shadow-sm">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
-                <span>התחבר עם Google</span>
-            </button>
-            <div id="userDisplay" class="hidden flex items-center gap-3">
-                <span id="userName" class="text-sm font-medium"></span>
-                <img id="userPhoto" src="" class="w-8 h-8 rounded-full border border-gray-200">
-                <button onclick="window.logout()" class="text-xs text-red-500 hover:text-red-700 underline">התנתק</button>
-            </div>
-        </div>
+        <h1 class="text-4xl font-bold text-slate-800">Deep Research Hub</h1>
+        <p class="text-slate-500 mt-2">מחולל פרומפטים למחקר עומק (גרסת Lite)</p>
     </header>
 
-    <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <section class="lg:col-span-3 order-2 lg:order-1">
-            <div class="glass-card rounded-2xl p-5 h-[calc(100vh-150px)] flex flex-col">
-                <h3 class="font-bold text-gray-700 mb-4 flex items-center gap-2">
-                    <i class="fas fa-history text-blue-500"></i> היסטוריית מחקרים
-                </h3>
-                <div id="historyList" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
-                    <p class="text-sm text-gray-400 text-center mt-10">התחבר כדי לראות היסטוריה</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="lg:col-span-6 space-y-6 order-1 lg:order-2">
-            <div class="glass-card rounded-2xl p-6 relative">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-                    <i class="fas fa-search text-blue-600"></i> נושא חדש
+        <section class="lg:col-span-2 space-y-6">
+            <div class="card">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-blue-700">
+                    <i class="fas fa-keyboard"></i> 1. הזן נושא למחקר
                 </h2>
                 <textarea id="topicInput" rows="3" 
-                    class="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none bg-white/50"
-                    placeholder="מה תרצה לחקור היום? (למשל: עתיד האנרגיה הירוקה ב-2030)"></textarea>
+                    class="w-full p-4 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:outline-none resize-none text-lg"
+                    placeholder="למשל: השפעת הבינה המלאכותית על שוק העבודה בישראל..."></textarea>
                 
-                <div class="flex justify-between items-center mt-4">
-                    <div class="text-xs text-gray-500 flex items-center gap-1">
-                        <i class="fas fa-lock"></i> המידע שלך פרטי ומאובטח
-                    </div>
-                    <button onclick="window.generateAndSave()" class="btn-primary text-white font-bold py-2 px-8 rounded-xl flex items-center gap-2 shadow-lg hover:shadow-xl">
-                        <div class="loader" id="saveLoader"></div>
-                        <span id="saveBtnText">צור ושמור לענן</span>
-                        <i class="fas fa-magic"></i>
-                    </button>
-                </div>
+                <button onclick="generatePrompt()" class="btn w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl mt-4 flex items-center justify-center gap-2 text-lg shadow-md">
+                    <i class="fas fa-magic"></i>
+                    צור פרומפט מקצועי
+                </button>
             </div>
 
-            <div class="glass-card rounded-2xl p-6">
+            <div class="card bg-blue-50 border border-blue-100">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="font-bold text-gray-700">הפרומפט המוכן</h2>
-                    <button onclick="window.copyToClipboard()" class="text-blue-600 hover:text-blue-800 text-sm font-medium bg-blue-50 px-3 py-1 rounded-lg transition"><i class="far fa-copy"></i> העתק</button>
+                    <h2 class="font-bold text-slate-700 text-lg">2. העתק את הפרומפט</h2>
+                    <button onclick="copyToClipboard()" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition flex items-center gap-2">
+                        <i class="far fa-copy"></i> העתק
+                    </button>
                 </div>
                 <textarea id="promptOutput" readonly 
-                    class="w-full h-[300px] p-4 bg-white/40 rounded-xl border border-gray-200 font-mono text-sm leading-relaxed focus:outline-none resize-none"
-                    placeholder="הפרומפט המקצועי יופיע כאן..."></textarea>
+                    class="w-full h-[400px] p-4 bg-white rounded-xl border border-blue-200 font-mono text-sm leading-relaxed focus:outline-none resize-none"
+                    placeholder="הפרומפט יופיע כאן..."></textarea>
             </div>
         </section>
 
-        <section class="lg:col-span-3 order-3 lg:order-3">
-             <div class="glass-card rounded-2xl p-5 sticky top-5">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                    <i class="fas fa-rocket text-purple-600"></i> שיגור מהיר
+        <section class="lg:col-span-1">
+             <div class="card sticky top-4">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-purple-700">
+                    <i class="fas fa-rocket"></i> 3. פתח כלי מחקר
                 </h2>
+                <p class="text-sm text-gray-500 mb-4">לחץ על הכלים כדי לפתוח אותם (אחד אחד):</p>
+                
                 <div class="space-y-3">
-                    <button onclick="window.openTool('https://gemini.google.com/app')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-blue-50 transition text-right group border border-transparent hover:border-blue-200">
-                        <i class="fas fa-star text-blue-500 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-blue-600">Gemini</span>
-                    </button>
-                    <button onclick="window.openTool('https://chatgpt.com/')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-green-50 transition text-right group border border-transparent hover:border-green-200">
-                        <i class="fas fa-robot text-green-600 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-green-600">ChatGPT</span>
-                    </button>
-                    <button onclick="window.openTool('https://claude.ai/new')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-orange-50 transition text-right group border border-transparent hover:border-orange-200">
-                        <i class="fas fa-brain text-orange-600 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-orange-600">Claude</span>
-                    </button>
-                    <button onclick="window.openTool('https://www.perplexity.ai/')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-teal-50 transition text-right group border border-transparent hover:border-teal-200">
-                        <i class="fas fa-search-location text-teal-600 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-teal-600">Perplexity</span>
-                    </button>
+                    <a href="https://gemini.google.com/app" target="_blank" class="btn flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-blue-300 hover:bg-blue-50 group transition">
+                        <i class="fas fa-star text-blue-500 w-8 text-xl"></i>
+                        <span class="font-bold text-gray-700 group-hover:text-blue-700">Gemini</span>
+                    </a>
                     
-                    <button onclick="window.openTool('https://www.genspark.ai/')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-yellow-50 transition text-right group border border-transparent hover:border-yellow-200">
-                        <i class="fas fa-bolt text-yellow-500 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-yellow-600">GenSpark</span>
-                    </button>
+                    <a href="https://chatgpt.com/" target="_blank" class="btn flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-green-300 hover:bg-green-50 group transition">
+                        <i class="fas fa-robot text-green-600 w-8 text-xl"></i>
+                        <span class="font-bold text-gray-700 group-hover:text-green-700">ChatGPT</span>
+                    </a>
                     
-                    <button onclick="window.openTool('https://grok.com/?referrer=website')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-gray-100 transition text-right group border border-transparent hover:border-gray-300">
-                        <i class="fas fa-terminal text-gray-800 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-gray-900">Grok</span>
-                    </button>
+                    <a href="https://claude.ai/new" target="_blank" class="btn flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-orange-300 hover:bg-orange-50 group transition">
+                        <i class="fas fa-brain text-orange-600 w-8 text-xl"></i>
+                        <span class="font-bold text-gray-700 group-hover:text-orange-700">Claude</span>
+                    </a>
+                    
+                    <a href="https://www.perplexity.ai/" target="_blank" class="btn flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-teal-300 hover:bg-teal-50 group transition">
+                        <i class="fas fa-search-location text-teal-600 w-8 text-xl"></i>
+                        <span class="font-bold text-gray-700 group-hover:text-teal-700">Perplexity</span>
+                    </a>
 
-                     <div class="h-px bg-gray-300 my-2"></div>
-                     <button onclick="window.openTool('https://notebooklm.google.com/')" class="w-full flex items-center p-3 bg-yellow-50 rounded-xl hover:bg-yellow-100 transition text-right group border border-yellow-200 shadow-sm">
-                        <i class="fas fa-book-open text-yellow-600 w-8"></i>
-                        <span class="text-sm font-medium group-hover:text-yellow-700">NotebookLM (לסיכום)</span>
-                    </button>
+                    <a href="https://www.genspark.ai/" target="_blank" class="btn flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-yellow-300 hover:bg-yellow-50 group transition">
+                        <i class="fas fa-bolt text-yellow-500 w-8 text-xl"></i>
+                        <span class="font-bold text-gray-700 group-hover:text-yellow-700">GenSpark</span>
+                    </a>
+
+                    <a href="https://grok.com/?referrer=website" target="_blank" class="btn flex items-center p-4 bg-white border border-gray-200 rounded-xl hover:border-gray-400 hover:bg-gray-100 group transition">
+                        <i class="fas fa-terminal text-gray-800 w-8 text-xl"></i>
+                        <span class="font-bold text-gray-700 group-hover:text-gray-900">Grok</span>
+                    </a>
                     
-                     <button onclick="window.openAllTools()" class="w-full mt-2 py-3 text-xs text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md font-bold transition flex justify-center items-center gap-2">
-                        <i class="fas fa-external-link-alt"></i>
-                        פתח את כולם במקביל
-                    </button>
+                    <div class="h-px bg-gray-200 my-4"></div>
+                    
+                    <a href="https://notebooklm.google.com/" target="_blank" class="btn flex items-center p-4 bg-yellow-50 border border-yellow-200 rounded-xl hover:bg-yellow-100 group transition">
+                        <i class="fas fa-book-open text-yellow-600 w-8 text-xl"></i>
+                        <div>
+                            <span class="font-bold text-yellow-800 block">NotebookLM</span>
+                            <span class="text-xs text-yellow-600">לסיכום וריכוז המידע</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
+    </div>
 
-    </main>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-        // המפתחות שלך כבר בפנים!
-        const firebaseConfig = {
-            apiKey: "AIzaSyC9EbSoqlGUOn8_uy6XnEQLvx6_u47_5lQ",
-            authDomain: "deepresearch-89379.firebaseapp.com",
-            projectId: "deepresearch-89379",
-            storageBucket: "deepresearch-89379.firebasestorage.app",
-            messagingSenderId: "431172801604",
-            appId: "1:431172801604:web:ec37a4b611c9ca71641811",
-            measurementId: "G-3Z03QN5Y6W"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-        
-        let currentUser = null;
-
-        // התחברות
-        window.googleLogin = () => {
-            signInWithPopup(auth, provider)
-                .then((result) => console.log("מחובר:", result.user.email))
-                .catch((error) => {
-                    console.error(error);
-                    alert("שגיאה בהתחברות: " + error.message);
-                });
-        };
-
-        window.logout = () => {
-            signOut(auth).then(() => console.log("מנותק"));
-        };
-
-        // האזנה למצב משתמש
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            const loginBtn = document.getElementById('loginBtn');
-            const userDisplay = document.getElementById('userDisplay');
-
-            if (user) {
-                loginBtn.classList.add('hidden');
-                userDisplay.classList.remove('hidden');
-                document.getElementById('userName').textContent = user.displayName ? user.displayName.split(' ')[0] : 'אורח';
-                document.getElementById('userPhoto').src = user.photoURL || 'https://via.placeholder.com/40';
-                loadHistory(); 
-            } else {
-                loginBtn.classList.remove('hidden');
-                userDisplay.classList.add('hidden');
-                document.getElementById('historyList').innerHTML = '<p class="text-sm text-gray-400 text-center mt-10">התחבר כדי לראות היסטוריה</p>';
-            }
-        });
-
-        // לוגיקת הפרומפט
+    <script>
         const promptTemplate = `אני רוצה שתעזור לי לבנות פרומפט מקצועי שיחפש מידע מהאינטרנט בצורה הכי מדויקת, אמינה ומסודרת שאפשר, כדי שאוכל להשתמש בו בפיצ׳ר ה- Deep Research.
 
 המטרה שלי היא ללמוד בצורה הטובה, המקיפה והאיכותית ביותר את הנושא הבא בשפה נגישה ופשוטה: 
@@ -215,109 +124,29 @@
 התשובה צריכה להיות מקיפה, מסודרת עם כותרות, בוליטים ומסקנות ברורות.
 בסיום, תמיד תשאיר אפשרות פתוחה ותציע כיווני מחקר נוספים שהמודל מצא לנכון להרחיב עליהם.`;
 
-        window.generateAndSave = async () => {
+        function generatePrompt() {
             const topic = document.getElementById('topicInput').value;
-            if (!topic.trim()) { alert('נא להזין נושא'); return; }
-
+            if (!topic.trim()) {
+                alert('אנא הכנס נושא למחקר');
+                return;
+            }
             const finalPrompt = promptTemplate.replace('{TOPIC}', topic);
             document.getElementById('promptOutput').value = finalPrompt;
-
-            if (currentUser) {
-                const btnText = document.getElementById('saveBtnText');
-                const loader = document.getElementById('saveLoader');
-                btnText.textContent = "שומר...";
-                loader.style.display = "inline-block";
-
-                try {
-                    await addDoc(collection(db, "researches"), {
-                        uid: currentUser.uid,
-                        topic: topic,
-                        prompt: finalPrompt,
-                        timestamp: new Date()
-                    });
-                } catch (e) {
-                    console.error("Error: ", e);
-                    alert("שגיאה בשמירה! וודא שחוקי האבטחה ב-Firebase מוגדרים נכון.");
-                } finally {
-                    btnText.textContent = "צור ושמור לענן";
-                    loader.style.display = "none";
-                }
-            } else {
-                alert("שים לב: לא מחובר, ההיסטוריה לא נשמרת.");
-            }
-        };
-
-        function loadHistory() {
-            if (!currentUser) return;
-            
-            const q = query(collection(db, "researches"), 
-                          where("uid", "==", currentUser.uid), 
-                          orderBy("timestamp", "desc"));
-
-            onSnapshot(q, (querySnapshot) => {
-                const list = document.getElementById('historyList');
-                list.innerHTML = "";
-                
-                if(querySnapshot.empty) {
-                    list.innerHTML = '<p class="text-sm text-gray-400 text-center mt-4">אין עדיין מחקרים שמורים</p>';
-                    return;
-                }
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const div = document.createElement('div');
-                    div.className = "p-3 bg-white/50 rounded-lg hover:bg-blue-50 cursor-pointer transition border border-transparent hover:border-blue-200 text-sm mb-2 shadow-sm";
-                    div.onclick = () => {
-                        document.getElementById('topicInput').value = data.topic;
-                        document.getElementById('promptOutput').value = data.prompt;
-                    };
-                    
-                    const date = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleDateString('he-IL') : '';
-                    
-                    div.innerHTML = `
-                        <div class="font-bold text-gray-800 truncate">${data.topic}</div>
-                        <div class="text-xs text-gray-500 mt-1 flex justify-between">
-                            <span>${date}</span>
-                            <i class="fas fa-chevron-left text-xs opacity-50"></i>
-                        </div>
-                    `;
-                    list.appendChild(div);
-                });
-            });
         }
 
-        window.openTool = (url) => window.open(url, '_blank');
-        
-        // מעודכן עם כל הכלים
-        window.openAllTools = () => {
-            const urls = [
-                'https://claude.ai/new', 
-                'https://gemini.google.com/app', 
-                'https://chatgpt.com/', 
-                'https://www.genspark.ai/', 
-                'https://grok.com/?referrer=website',
-                'https://www.perplexity.ai/'
-            ];
-            
-            alert("שים לב: הדפדפן שלך ינסה לחסום פתיחת חלונות מרובים. אנא חפש את סמל החסימה בשורת הכתובת ואשר 'תמיד לאפשר חלונות קופצים'.");
-
-            urls.forEach(url => window.open(url, '_blank'));
-            // מסמך מרכז
-            window.open('https://docs.google.com/document/d/1DNu71a38Tusb4Vdiw7zZElelgt5pzRsmFiftIBYVyjA/edit?tab=t.0', '_blank');
-        };
-
-        window.copyToClipboard = () => {
+        function copyToClipboard() {
             const outputText = document.getElementById('promptOutput');
             outputText.select();
             document.execCommand('copy');
             
-            const btn = document.querySelector('button[onclick="window.copyToClipboard()"]');
+            const btn = document.querySelector('button[onclick="copyToClipboard()"]');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-check"></i> הועתק!';
-            btn.classList.add('bg-green-100', 'text-green-700');
+            btn.className = "bg-green-100 text-green-700 px-4 py-2 rounded-lg font-medium transition flex items-center gap-2";
+            
             setTimeout(() => {
                 btn.innerHTML = originalText;
-                btn.classList.remove('bg-green-100', 'text-green-700');
+                btn.className = "bg-white text-blue-600 px-4 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition flex items-center gap-2";
             }, 2000);
         }
     </script>
