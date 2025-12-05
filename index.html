@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Deep Research | Gemini 1.5 Flash</title>
+    <title>Deep Research Auto-Pilot | Gemini 1.5 Flash</title>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,6 +13,7 @@
         .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
         .step-number { background: #2563eb; color: white; width: 32px; height: 32px; display: flex; items-center; justify-center; border-radius: 50%; font-weight: bold; margin-left: 12px; flex-shrink: 0; }
         
+        /* אנימציית טעינה */
         .scanning-bar {
             height: 4px;
             width: 100%;
@@ -47,7 +48,7 @@
             </div>
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">Deep Research Auto-Pilot</h1>
-                <p class="text-slate-500 text-sm">מופעל ע"י Gemini 1.5 Flash (החדש ביותר)</p>
+                <p class="text-slate-500 text-sm">מופעל ע"י Gemini 1.5 Flash (הגרסה החדשה)</p>
             </div>
         </div>
         
@@ -67,7 +68,7 @@
                 </div>
                 <textarea id="topicInput" rows="3" 
                     class="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:outline-none transition resize-none"
-                    placeholder="מה הנושא? (למשל: השפעת בינה מלאכותית על רפואה)"></textarea>
+                    placeholder="מה הנושא? (למשל: עתיד הנדל״ן בישראל)"></textarea>
             </div>
 
             <div class="card p-6 bg-blue-50 border-blue-100">
@@ -171,7 +172,7 @@
             `;
 
             try {
-                // השינוי הגדול: שימוש במודל gemini-1.5-flash
+                // הכתובת החדשה והנכונה - 1.5-flash
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
                 
                 const response = await fetch(url, {
