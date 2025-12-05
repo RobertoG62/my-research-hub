@@ -3,257 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Research | Smart Auto-Pilot</title>
+    <title>Deep Research | V6 Diagnostic</title>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
-        body { font-family: 'Rubik', sans-serif; background: #f1f5f9; min-height: 100vh; color: #1e293b; }
-        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; }
-        .step-number { background: #2563eb; color: white; width: 32px; height: 32px; display: flex; items-center; justify-center; border-radius: 50%; font-weight: bold; margin-left: 12px; flex-shrink: 0; }
-        
-        .loader {
-            border: 3px solid #f3f3f3; 
-            border-top: 3px solid #3498db; 
-            border-radius: 50%;
-            width: 20px; 
-            height: 20px; 
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
+        body { font-family: 'Rubik', sans-serif; background: #f8fafc; color: #1e293b; }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="p-4 md:p-8 max-w-7xl mx-auto">
+<body class="p-6 max-w-6xl mx-auto">
 
-    <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+    <header class="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
         <div class="flex items-center gap-3">
-            <div class="p-3 bg-indigo-600 rounded-xl shadow-lg">
-                <i class="fas fa-brain text-white text-2xl"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800">Deep Research Auto-Pilot</h1>
-                <p class="text-slate-500 text-sm">מערכת חכמה עם גיבוי אוטומטי (Smart Fallback)</p>
-            </div>
+            <div class="p-2 bg-blue-600 rounded-lg text-white"><i class="fas fa-stethoscope text-xl"></i></div>
+            <h1 class="text-xl font-bold">Deep Research Hub <span class="text-sm font-normal text-slate-500">| גרסת דיאגנוסטיקה</span></h1>
         </div>
         
-        <div class="bg-green-100 text-green-800 px-4 py-2 rounded-lg text-sm font-medium border border-green-200 flex items-center gap-2">
-            <i class="fas fa-check-circle"></i> מפתח API מוטמע
+        <div class="flex gap-2 w-1/2">
+            <input type="text" id="apiKeyInput" placeholder="הדבק כאן את המפתח החדש..." class="border p-2 rounded-lg w-full text-sm font-mono">
+            <button onclick="testKey()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm whitespace-nowrap hover:bg-slate-900 transition">
+                <i class="fas fa-plug"></i> בדוק מפתח
+            </button>
         </div>
     </header>
 
-    <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div id="statusMessage" class="hidden mb-6 p-4 rounded-xl border"></div>
 
-        <section class="lg:col-span-4 space-y-6">
-            
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <div class="space-y-6">
             <div class="card p-6">
-                <div class="flex items-center mb-4">
-                    <div class="step-number">1</div>
-                    <h2 class="font-bold text-lg">הגדרת נושא המחקר</h2>
-                </div>
-                <textarea id="topicInput" rows="3" 
-                    class="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-indigo-500 focus:outline-none transition resize-none"
-                    placeholder="מה הנושא? (למשל: השפעת ה-ADHD על יזמים)"></textarea>
-            </div>
-
-            <div class="card p-6 bg-indigo-50 border-indigo-100">
-                <div class="flex items-center mb-4">
-                    <div class="step-number bg-indigo-600">2</div>
-                    <h2 class="font-bold text-lg text-indigo-900">יצירת אסטרטגיה</h2>
-                </div>
-                <p class="text-sm text-indigo-700 mb-4">
-                    המערכת תנסה מספר מודלים של Gemini עד שתצליח לייצר פרומפט מקצועי.
-                </p>
+                <h2 class="font-bold text-lg mb-3">1. נושא למחקר</h2>
+                <textarea id="topicInput" rows="3" class="w-full p-3 border rounded-lg focus:ring-2 ring-blue-500 outline-none" placeholder="הכנס נושא..."></textarea>
                 
-                <button onclick="runSmartResearch()" id="runBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fas fa-magic"></i>
-                    הרץ ניתוח חכם
-                </button>
-                
-                <div id="statusArea" class="mt-3 text-center text-sm hidden">
-                    <div class="loader ml-2"></div>
-                    <span id="statusText" class="text-indigo-600 font-medium">מתחבר...</span>
-                </div>
-                
-                <p id="errorMsg" class="text-red-500 text-xs mt-2 hidden text-center font-bold bg-red-50 p-2 rounded border border-red-200" dir="ltr"></p>
-            </div>
-        </section>
-
-        <section class="lg:col-span-8 space-y-6">
-            
-            <div class="card p-6 h-[500px] flex flex-col relative">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center">
-                        <div class="step-number bg-purple-600">3</div>
-                        <h2 class="font-bold text-lg">הפרומפט החכם המוכן</h2>
-                    </div>
-                    <button onclick="copyToClipboard()" class="text-indigo-600 hover:bg-indigo-50 px-3 py-1 rounded-lg text-sm font-medium transition">
-                        <i class="far fa-copy"></i> העתק
-                    </button>
-                </div>
-                
-                <textarea id="finalPromptOutput" readonly 
-                    class="w-full h-full p-4 bg-slate-50 rounded-xl border border-slate-200 font-mono text-sm leading-relaxed focus:outline-none resize-none"
-                    placeholder="כאן יופיע הפרומפט הסופי..."></textarea>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <button onclick="openTool('https://gemini.google.com/app')" class="p-3 bg-white border hover:border-blue-400 rounded-xl flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-star text-blue-500"></i> <span class="font-bold text-slate-600 group-hover:text-blue-600">Gemini</span>
-                </button>
-                <button onclick="openTool('https://chatgpt.com/')" class="p-3 bg-white border hover:border-green-400 rounded-xl flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-robot text-green-500"></i> <span class="font-bold text-slate-600 group-hover:text-green-600">ChatGPT</span>
-                </button>
-                <button onclick="openTool('https://claude.ai/new')" class="p-3 bg-white border hover:border-orange-400 rounded-xl flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-brain text-orange-500"></i> <span class="font-bold text-slate-600 group-hover:text-orange-600">Claude</span>
-                </button>
-                <button onclick="openTool('https://www.perplexity.ai/')" class="p-3 bg-white border hover:border-teal-400 rounded-xl flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-search text-teal-500"></i> <span class="font-bold text-slate-600 group-hover:text-teal-600">Perplexity</span>
-                </button>
-                <button onclick="openTool('https://www.genspark.ai/')" class="p-3 bg-white border hover:border-yellow-400 rounded-xl flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-bolt text-yellow-500"></i> <span class="font-bold text-slate-600 group-hover:text-yellow-600">GenSpark</span>
-                </button>
-                <button onclick="openTool('https://grok.com/?referrer=website')" class="p-3 bg-white border hover:border-gray-400 rounded-xl flex items-center justify-center gap-2 transition group">
-                    <i class="fas fa-terminal text-gray-700"></i> <span class="font-bold text-slate-600 group-hover:text-gray-900">Grok</span>
+                <button onclick="runResearch()" id="runBtn" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    אנא בדוק מפתח תחילה
                 </button>
             </div>
-            
-            <button onclick="openAll()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-900 font-bold shadow-md flex items-center justify-center gap-2">
-                <i class="fas fa-external-link-alt"></i> 🚀 פתח את כל הכלים במקביל
-            </button>
+        </div>
 
-        </section>
+        <div class="card p-6 h-[400px] flex flex-col">
+            <div class="flex justify-between mb-2">
+                <h2 class="font-bold">הפרומפט המוכן</h2>
+                <button onclick="copyOutput()" class="text-blue-600 text-sm"><i class="far fa-copy"></i> העתק</button>
+            </div>
+            <textarea id="output" readonly class="flex-1 w-full p-3 bg-slate-50 rounded-lg border font-mono text-sm resize-none"></textarea>
+        </div>
 
+        <div class="lg:col-span-2 grid grid-cols-6 gap-2">
+            <button onclick="openTool('https://gemini.google.com/app')" class="p-3 bg-white border rounded-lg hover:bg-blue-50">Gemini</button>
+            <button onclick="openTool('https://chatgpt.com/')" class="p-3 bg-white border rounded-lg hover:bg-green-50">ChatGPT</button>
+            <button onclick="openTool('https://claude.ai/new')" class="p-3 bg-white border rounded-lg hover:bg-orange-50">Claude</button>
+            <button onclick="openTool('https://www.perplexity.ai/')" class="p-3 bg-white border rounded-lg hover:bg-teal-50">Perplexity</button>
+            <button onclick="openTool('https://www.genspark.ai/')" class="p-3 bg-white border rounded-lg hover:bg-yellow-50">GenSpark</button>
+            <button onclick="openTool('https://grok.com/?referrer=website')" class="p-3 bg-white border rounded-lg hover:bg-gray-50">Grok</button>
+        </div>
     </main>
 
     <script>
-        const API_KEY = 'AIzaSyAxBt9cRsKFpzyxZQpRV2CCm06US0QL3Ho';
+        let validModel = null;
+        let activeKey = null;
 
-        // רשימת מודלים לניסיון - אם הראשון נכשל, ננסה את הבא
-        const MODELS_TO_TRY = [
-            'gemini-1.5-flash',
-            'gemini-1.5-pro',
-            'gemini-1.0-pro',
-            'gemini-pro'
-        ];
+        // שלב 1: בדיקת המפתח והמודלים הזמינים
+        async function testKey() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            const statusDiv = document.getElementById('statusMessage');
+            
+            if (!key) { alert("אנא הזן מפתח"); return; }
+            
+            statusDiv.className = "mb-6 p-4 rounded-xl border bg-blue-50 border-blue-200 text-blue-800 flex items-center gap-3";
+            statusDiv.innerHTML = '<div class="loader"></div> <span>בודק חיבור לגוגל וסורק מודלים זמינים...</span>';
+            statusDiv.classList.remove('hidden');
 
-        async function runSmartResearch() {
-            const topic = document.getElementById('topicInput').value;
-            const outputArea = document.getElementById('finalPromptOutput');
-            const statusArea = document.getElementById('statusArea');
-            const statusText = document.getElementById('statusText');
-            const btn = document.getElementById('runBtn');
-            const errorMsg = document.getElementById('errorMsg');
-
-            if (!topic) { alert('נא להזין נושא'); return; }
-
-            // איפוס ממשק
-            btn.disabled = true;
-            btn.classList.add('opacity-50');
-            statusArea.classList.remove('hidden');
-            errorMsg.classList.add('hidden');
-            outputArea.value = '';
-
-            const metaPrompt = `
-                Analyze the research topic: "${topic}".
-                Output a structured plan:
-                1. Key Research Questions
-                2. Key Terminology
-                3. Main Aspects
-                4. Controversies
-                Keep it concise.
-            `;
-
-            let success = false;
-            let geminiAnalysis = "";
-
-            // --- הלולאה החכמה: מנסה מודל אחרי מודל ---
-            for (const model of MODELS_TO_TRY) {
-                try {
-                    statusText.textContent = `מנסה מודל: ${model}...`;
-                    console.log(`Trying model: ${model}`);
-
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: metaPrompt }] }] })
-                    });
-
-                    if (!response.ok) {
-                        const err = await response.json();
-                        console.warn(`Model ${model} failed:`, err);
-                        continue; // נסה את המודל הבא
-                    }
-
-                    const data = await response.json();
-                    if (!data.candidates || !data.candidates[0]?.content?.parts?.[0]?.text) {
-                        throw new Error("Empty response");
-                    }
-
-                    geminiAnalysis = data.candidates[0].content.parts[0].text;
-                    success = true;
-                    statusText.textContent = `הצלחה עם מודל: ${model}!`;
-                    statusText.classList.replace('text-indigo-600', 'text-green-600');
-                    break; // הצלחנו! צא מהלולאה
-
-                } catch (e) {
-                    console.warn(`Error with ${model}:`, e);
+            try {
+                // בדיקה כללית - קבלת רשימת מודלים
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+                
+                if (!response.ok) throw new Error("המפתח לא תקין או שהפרויקט לא מוגדר טוב. (שגיאה 400/403)");
+                
+                const data = await response.json();
+                
+                // חיפוש מודל שעובד
+                const models = data.models || [];
+                // רשימת העדיפויות שלנו
+                const preferredModels = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro'];
+                
+                // מציאת המודל הכי טוב שזמין לך בפועל
+                validModel = preferredModels.find(pref => models.some(m => m.name.includes(pref)));
+                
+                if (validModel) {
+                    activeKey = key;
+                    statusDiv.className = "mb-6 p-4 rounded-xl border bg-green-50 border-green-200 text-green-800";
+                    statusDiv.innerHTML = `<i class="fas fa-check-circle text-xl"></i> <strong>הצלחה!</strong> התחברנו למודל: <code>${validModel}</code>. אפשר להתחיל לעבוד.`;
+                    
+                    const btn = document.getElementById('runBtn');
+                    btn.disabled = false;
+                    btn.innerHTML = `הרץ ניתוח באמצעות ${validModel} <i class="fas fa-magic ml-2"></i>`;
+                } else {
+                    throw new Error("המפתח תקין, אבל לא נמצאו מודלים פתוחים לשימוש בחשבון זה.");
                 }
+
+            } catch (e) {
+                statusDiv.className = "mb-6 p-4 rounded-xl border bg-red-50 border-red-200 text-red-800";
+                statusDiv.innerHTML = `<strong>שגיאה:</strong> ${e.message}<br><span class="text-sm mt-2 block">טיפ: צור מפתח חדש ב-Google AI Studio וודא שבחרת "New Project".</span>`;
+                console.error(e);
             }
-
-            // --- טיפול בתוצאה ---
-            if (success) {
-                const finalSuperPrompt = `ביצעתי ניתוח ראשוני לנושא: "${topic}".
-להלן מתווה המחקר וההקשר שנבנה ע"י מודל שפה ראשוני.
-אני מבקש שתשתמש במידע הזה כבסיס, ותרחיב את המחקר לעומק.
-
-=== הקשר ומתווה מחקר (Context) ===
-${geminiAnalysis}
-
-=== ההנחיה שלך ===
-בהתבסס על המתווה הנ"ל:
-1. בצע מחקר עומק על כל אחד מתתי-הנושאים שהוזכרו.
-2. חפש נתונים עדכניים ומחקרים רלוונטיים.
-3. הצג את התשובה כדו"ח מקיף ומסודר.
-בסיום, תמיד תשאיר אפשרות פתוחה ותציע כיווני מחקר נוספים.
-`;
-                outputArea.value = finalSuperPrompt;
-                setTimeout(() => { statusArea.classList.add('hidden'); }, 2000);
-            } else {
-                // אם הגענו לפה - כל המודלים נכשלו
-                errorMsg.textContent = "שגיאה: לא הצלחנו להתחבר לאף אחד ממודלי Gemini. ייתכן שיש בעיה במפתח ה-API או בחסימת רשת.";
-                errorMsg.classList.remove('hidden');
-                statusArea.classList.add('hidden');
-            }
-
-            btn.disabled = false;
-            btn.classList.remove('opacity-50');
         }
 
-        function copyToClipboard() {
-            const outputText = document.getElementById('finalPromptOutput');
-            if(!outputText.value) return;
-            outputText.select();
-            document.execCommand('copy');
-            alert('הועתק!');
+        // שלב 2: הרצת המחקר
+        async function runResearch() {
+            const topic = document.getElementById('topicInput').value;
+            const output = document.getElementById('output');
+            
+            if (!topic) { alert("הכנס נושא"); return; }
+            
+            output.value = "חושב...";
+            
+            const prompt = `Analyze this topic: "${topic}". Output a research plan with: 1. Key Questions 2. Terminology 3. Sub-topics. Keep it concise.`;
+
+            try {
+                // שימוש במודל שנמצא תקין בשלב הבדיקה
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${validModel}:generateContent?key=${activeKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const data = await response.json();
+                const analysis = data.candidates[0].content.parts[0].text;
+                
+                const finalPrompt = `נושא המחקר: "${topic}"\n\nמתווה ראשוני (מבוסס ${validModel}):\n${analysis}\n\nהנחיה למחקר עומק:\nאנא בצע מחקר מקיף על בסיס הנקודות הנ"ל. חפש מקורות, הצלב נתונים והצג דו"ח מלא.`;
+                
+                output.value = finalPrompt;
+
+            } catch (e) {
+                output.value = "שגיאה ביצירת הפרומפט. בדוק את הקונסול.";
+            }
         }
 
+        function copyOutput() {
+            const copyText = document.getElementById("output");
+            copyText.select();
+            document.execCommand("copy");
+            alert("הועתק!");
+        }
+        
         function openTool(url) { window.open(url, '_blank'); }
-
-        function openAll() {
-             const urls = [
-                'https://claude.ai/new', 
-                'https://gemini.google.com/app', 
-                'https://chatgpt.com/', 
-                'https://www.genspark.ai/', 
-                'https://grok.com/?referrer=website',
-                'https://www.perplexity.ai/'
-            ];
-            alert("שים לב: אם החלונות לא נפתחים, אשר חלונות קופצים בשורת הכתובת.");
-            urls.forEach(url => window.open(url, '_blank'));
-            window.open('https://docs.google.com/document/d/1DNu71a38Tusb4Vdiw7zZElelgt5pzRsmFiftIBYVyjA/edit?tab=t.0', '_blank');
-        }
     </script>
 </body>
 </html>
