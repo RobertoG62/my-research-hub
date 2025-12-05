@@ -10,14 +10,14 @@
     
     <style>
         body { font-family: 'Rubik', sans-serif; background: radial-gradient(at top left, #e0f2fe 0%, #f0f9ff 100%); min-height: 100vh; color: #1e293b; }
-        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); transition: all 0.3s ease; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); transition: all 0.3s ease; }
         .glass-card:hover { transform: translateY(-2px); box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.15); }
         .btn-primary { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transition: all 0.3s ease; }
         .btn-primary:hover { transform: scale(1.02); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
         .fa-arrow-left { transform: rotate(180deg); }
         .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #3498db; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* פס גלילה מעוצב */
+        /* עיצוב גלילה */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
@@ -32,7 +32,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-slate-800">Deep Research Hub</h1>
-                <p class="text-xs text-slate-500">Secure & Connected V2.0</p>
+                <p class="text-xs text-slate-500">Secure & Connected V2.1</p>
             </div>
         </div>
         
@@ -116,13 +116,26 @@
                         <i class="fas fa-search-location text-teal-600 w-8"></i>
                         <span class="text-sm font-medium group-hover:text-teal-600">Perplexity</span>
                     </button>
+                    
+                    <button onclick="window.openTool('https://www.genspark.ai/')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-yellow-50 transition text-right group border border-transparent hover:border-yellow-200">
+                        <i class="fas fa-bolt text-yellow-500 w-8"></i>
+                        <span class="text-sm font-medium group-hover:text-yellow-600">GenSpark</span>
+                    </button>
+                    
+                    <button onclick="window.openTool('https://grok.com/?referrer=website')" class="w-full flex items-center p-3 bg-white/60 rounded-xl hover:bg-gray-100 transition text-right group border border-transparent hover:border-gray-300">
+                        <i class="fas fa-terminal text-gray-800 w-8"></i>
+                        <span class="text-sm font-medium group-hover:text-gray-900">Grok</span>
+                    </button>
+
                      <div class="h-px bg-gray-300 my-2"></div>
                      <button onclick="window.openTool('https://notebooklm.google.com/')" class="w-full flex items-center p-3 bg-yellow-50 rounded-xl hover:bg-yellow-100 transition text-right group border border-yellow-200 shadow-sm">
                         <i class="fas fa-book-open text-yellow-600 w-8"></i>
                         <span class="text-sm font-medium group-hover:text-yellow-700">NotebookLM (לסיכום)</span>
                     </button>
-                     <button onclick="window.openAllTools()" class="w-full mt-2 py-2 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg border border-indigo-200 font-bold">
-                        🚀 פתח את כולם במקביל
+                    
+                     <button onclick="window.openAllTools()" class="w-full mt-2 py-3 text-xs text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow-md font-bold transition flex justify-center items-center gap-2">
+                        <i class="fas fa-external-link-alt"></i>
+                        פתח את כולם במקביל
                     </button>
                 </div>
             </div>
@@ -135,10 +148,7 @@
         import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // ==========================================
-        //  כאן שמתי לך את הקוד מהתמונה ששלחת
-        // ==========================================
-        
+        // המפתחות שלך כבר בפנים!
         const firebaseConfig = {
             apiKey: "AIzaSyC9EbSoqlGUOn8_uy6XnEQLvx6_u47_5lQ",
             authDomain: "deepresearch-89379.firebaseapp.com",
@@ -149,10 +159,6 @@
             measurementId: "G-3Z03QN5Y6W"
         };
 
-        // ==========================================
-        //  מכאן והלאה הקוד ממשיך רגיל
-        // ==========================================
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -160,7 +166,7 @@
         
         let currentUser = null;
 
-        // לוגיקת התחברות
+        // התחברות
         window.googleLogin = () => {
             signInWithPopup(auth, provider)
                 .then((result) => console.log("מחובר:", result.user.email))
@@ -174,7 +180,7 @@
             signOut(auth).then(() => console.log("מנותק"));
         };
 
-        // האזנה למצב המשתמש
+        // האזנה למצב משתמש
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             const loginBtn = document.getElementById('loginBtn');
@@ -193,6 +199,7 @@
             }
         });
 
+        // לוגיקת הפרומפט
         const promptTemplate = `אני רוצה שתעזור לי לבנות פרומפט מקצועי שיחפש מידע מהאינטרנט בצורה הכי מדויקת, אמינה ומסודרת שאפשר, כדי שאוכל להשתמש בו בפיצ׳ר ה- Deep Research.
 
 המטרה שלי היא ללמוד בצורה הטובה, המקיפה והאיכותית ביותר את הנושא הבא בשפה נגישה ופשוטה: 
@@ -230,13 +237,13 @@
                     });
                 } catch (e) {
                     console.error("Error: ", e);
-                    alert("שגיאה בשמירה! האם זכרת ליצור Database ב-Firebase ולוודא שהחוקים (Rules) מוגדרים נכון?");
+                    alert("שגיאה בשמירה! וודא שחוקי האבטחה ב-Firebase מוגדרים נכון.");
                 } finally {
                     btnText.textContent = "צור ושמור לענן";
                     loader.style.display = "none";
                 }
             } else {
-                alert("שים לב: הפרומפט נוצר, אך לא נשמר בהיסטוריה כי אינך מחובר.");
+                alert("שים לב: לא מחובר, ההיסטוריה לא נשמרת.");
             }
         };
 
@@ -281,15 +288,21 @@
 
         window.openTool = (url) => window.open(url, '_blank');
         
+        // מעודכן עם כל הכלים
         window.openAllTools = () => {
             const urls = [
                 'https://claude.ai/new', 
                 'https://gemini.google.com/app', 
                 'https://chatgpt.com/', 
                 'https://www.genspark.ai/', 
+                'https://grok.com/?referrer=website',
                 'https://www.perplexity.ai/'
             ];
+            
+            alert("שים לב: הדפדפן שלך ינסה לחסום פתיחת חלונות מרובים. אנא חפש את סמל החסימה בשורת הכתובת ואשר 'תמיד לאפשר חלונות קופצים'.");
+
             urls.forEach(url => window.open(url, '_blank'));
+            // מסמך מרכז
             window.open('https://docs.google.com/document/d/1DNu71a38Tusb4Vdiw7zZElelgt5pzRsmFiftIBYVyjA/edit?tab=t.0', '_blank');
         };
 
