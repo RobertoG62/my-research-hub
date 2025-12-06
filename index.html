@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Research Hub 2.1 | Hebrew Edition</title>
+    <title>Deep Research Hub 3.0 | Clean Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +13,7 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' }
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
                     },
                     fontFamily: { sans: ['Rubik', 'sans-serif'] }
                 }
@@ -22,20 +22,25 @@
     </script>
 
     <style>
-        body { font-family: 'Rubik', sans-serif; background: #f0f4f8; }
+        body { font-family: 'Rubik', sans-serif; background: #f8fafc; }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .history-item { transition: all 0.2s; border-right: 3px solid transparent; }
-        .history-item:hover { background: #f8fafc; border-right-color: #3b82f6; }
+        .history-item:hover { background: #f1f5f9; border-right-color: #0ea5e9; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Focus Animation */
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+        }
+        .pulse-focus:focus { animation: pulse-ring 1s cubic-bezier(0.4, 0, 0.6, 1); }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col">
@@ -43,16 +48,15 @@
     <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-600 p-2 rounded-lg shadow-inner"><i class="fas fa-brain text-xl"></i></div>
+                <div class="bg-sky-600 p-2 rounded-lg shadow-inner"><i class="fas fa-search-location text-xl"></i></div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-wide">Deep Research Hub <span class="text-blue-400 text-sm font-normal">v2.1 IL</span></h1>
-                    <p class="text-slate-400 text-xs">מערכת מחקר חכמה (תוצאות בעברית)</p>
+                    <h1 class="text-xl font-bold tracking-wide">Deep Research Hub <span class="text-sky-400 text-sm font-normal">v3.0 Clean</span></h1>
+                    <p class="text-slate-400 text-xs">מחולל פרומפטים סטרילי ומקצועי</p>
                 </div>
             </div>
             <div class="flex gap-3 text-sm">
                 <div class="px-3 py-1 bg-slate-800 rounded-full border border-slate-700">
-                    <i class="fas fa-history text-blue-400 ml-2"></i>
-                    <span id="historyCount">0</span> מחקרים
+                    <span id="historyCount">0</span> מחקרים בארכיון
                 </div>
                 <button onclick="clearHistory()" class="text-slate-400 hover:text-red-400 transition" title="נקה היסטוריה">
                     <i class="fas fa-trash"></i>
@@ -65,10 +69,10 @@
         
         <aside class="lg:col-span-3 glass-panel rounded-2xl p-4 flex flex-col h-[calc(100vh-140px)] sticky top-24">
             <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <i class="fas fa-clock text-blue-500"></i> היסטוריה
+                <i class="fas fa-history text-sky-500"></i> מחקרים אחרונים
             </h3>
             <div id="historyList" class="flex-1 overflow-y-auto space-y-2 pr-1">
-                <div class="text-center text-slate-400 text-sm mt-10">אין היסטוריה עדיין</div>
+                <div class="text-center text-slate-400 text-sm mt-10">ההיסטוריה ריקה</div>
             </div>
         </aside>
 
@@ -76,59 +80,35 @@
             
             <div class="glass-panel rounded-2xl p-6 md:p-8">
                 <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-                    <span class="bg-blue-100 text-blue-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
-                    <h2 class="text-xl font-bold text-slate-800">מה נחקור היום?</h2>
+                    <span class="bg-sky-100 text-sky-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    <h2 class="text-xl font-bold text-slate-800">הגדרת נושא המחקר</h2>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-bold text-slate-600 mb-2">נושא המחקר</label>
-                        <textarea id="topic" rows="2" 
-                            class="w-full p-4 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none transition text-lg shadow-sm"
-                            placeholder="לדוגמה: ההשפעה של רכבים אוטונומיים על ערי העתיד..."></textarea>
-                    </div>
-
+                <div class="grid grid-cols-1 gap-6 mb-4">
                     <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">סגנון כתיבה</label>
-                        <select id="tone" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 outline-none shadow-sm cursor-pointer">
-                            <option value="Professional and Analytical">🔍 מקצועי ואנליטי</option>
-                            <option value="Academic and Rigorous">🎓 אקדמי ומחמיר</option>
-                            <option value="Marketing and Persuasive">📢 שיווקי ומשכנע</option>
-                            <option value="Investigative Journalism">📰 עיתונאי / תחקיר</option>
-                            <option value="Simple and Educational">👶 פשוט וברור (להסברה)</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">פורמט תוצאה</label>
-                        <select id="format" class="w-full p-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 outline-none shadow-sm cursor-pointer">
-                            <option value="Comprehensive Report">📄 דוח מקיף</option>
-                            <option value="Comparison Table">📊 טבלת השוואה</option>
-                            <option value="Step-by-Step Guide">👣 מדריך צעד-אחר-צעד</option>
-                            <option value="SWOT Analysis">⚖️ ניתוח SWOT (חוזקות/חולשות)</option>
-                            <option value="Executive Summary">👔 תקציר מנהלים</option>
-                        </select>
+                        <label class="block text-sm font-bold text-slate-600 mb-2">מה הנושא שברצונך לחקור?</label>
+                        <textarea id="topic" rows="3" 
+                            class="w-full p-4 bg-white border border-slate-300 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none transition text-lg shadow-sm pulse-focus"
+                            placeholder="לדוגמה: השפעת מחשוב קוונטי על אבטחת מידע בנקאית..."></textarea>
                     </div>
                 </div>
                 
-                <button onclick="generateTemplate()" 
-                    class="w-full mt-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition transform active:scale-[0.99] flex items-center justify-center gap-2 text-lg">
-                    <i class="fas fa-magic"></i>
-                    צור פרומפט (בעברית)
+                <button onclick="generateCleanPrompt()" 
+                    class="w-full mt-2 bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-2 text-lg">
+                    <i class="fas fa-microchip"></i>
+                    צור פרומפט מחקר (נקי ומקצועי)
                 </button>
             </div>
 
-            <div class="glass-panel rounded-2xl p-6 md:p-8 flex flex-col h-[500px]">
+            <div class="glass-panel rounded-2xl p-6 md:p-8 flex flex-col h-[600px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
                     <div class="flex items-center gap-3">
                         <span class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
-                        <h2 class="text-xl font-bold text-slate-800">הפרומפט המוכן להעתקה</h2>
+                        <h2 class="text-xl font-bold text-slate-800">הפרומפט המוכן (להעתקה)</h2>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="copyText()" class="text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-lg transition font-bold flex items-center gap-2 border border-blue-100">
-                            <i class="far fa-copy"></i> העתק
-                        </button>
-                    </div>
+                    <button onclick="copyText()" class="text-sky-600 hover:bg-sky-50 px-4 py-2 rounded-lg transition font-bold flex items-center gap-2 border border-sky-100">
+                        <i class="far fa-copy"></i> העתק ללוח
+                    </button>
                 </div>
                 
                 <textarea id="output" readonly 
@@ -136,107 +116,81 @@
                     placeholder="הפרומפט יופיע כאן..."></textarea>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-                <button onclick="openLink('https://claude.ai/new')" class="group p-3 bg-white rounded-xl border border-slate-200 hover:border-orange-400 hover:shadow-md transition text-slate-600 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-orange-500"></div> <span class="font-bold group-hover:text-orange-600">Claude</span>
-                </button>
-                <button onclick="openLink('https://gemini.google.com/app')" class="group p-3 bg-white rounded-xl border border-slate-200 hover:border-blue-400 hover:shadow-md transition text-slate-600 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-blue-500"></div> <span class="font-bold group-hover:text-blue-600">Gemini</span>
-                </button>
-                <button onclick="openLink('https://chatgpt.com/')" class="group p-3 bg-white rounded-xl border border-slate-200 hover:border-green-400 hover:shadow-md transition text-slate-600 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-green-500"></div> <span class="font-bold group-hover:text-green-600">ChatGPT</span>
-                </button>
-                <button onclick="openLink('https://www.perplexity.ai/')" class="group p-3 bg-white rounded-xl border border-slate-200 hover:border-teal-400 hover:shadow-md transition text-slate-600 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-teal-500"></div> <span class="font-bold group-hover:text-teal-600">Perplexity</span>
-                </button>
-                <button onclick="openLink('https://grok.com/')" class="group p-3 bg-white rounded-xl border border-slate-200 hover:border-gray-800 hover:shadow-md transition text-slate-600 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-gray-800"></div> <span class="font-bold group-hover:text-gray-900">Grok</span>
-                </button>
-                <button onclick="openLink('https://www.genspark.ai/')" class="group p-3 bg-white rounded-xl border border-slate-200 hover:border-purple-400 hover:shadow-md transition text-slate-600 flex items-center justify-center gap-2">
-                    <div class="w-2 h-2 rounded-full bg-purple-500"></div> <span class="font-bold group-hover:text-purple-600">GenSpark</span>
-                </button>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <button onclick="openLink('https://claude.ai/new')" class="p-3 bg-white border rounded-xl hover:border-orange-500 font-bold text-slate-600 shadow-sm">Claude</button>
+                <button onclick="openLink('https://gemini.google.com/app')" class="p-3 bg-white border rounded-xl hover:border-blue-500 font-bold text-slate-600 shadow-sm">Gemini</button>
+                <button onclick="openLink('https://chatgpt.com/')" class="p-3 bg-white border rounded-xl hover:border-green-500 font-bold text-slate-600 shadow-sm">ChatGPT</button>
+                <button onclick="openLink('https://www.perplexity.ai/')" class="p-3 bg-white border rounded-xl hover:border-teal-500 font-bold text-slate-600 shadow-sm">Perplexity</button>
+                <button onclick="openLink('https://grok.com/')" class="p-3 bg-white border rounded-xl hover:border-gray-800 font-bold text-slate-600 shadow-sm">Grok</button>
+                <button onclick="openLink('https://notebooklm.google.com/')" class="p-3 bg-white border rounded-xl hover:border-yellow-500 font-bold text-slate-600 shadow-sm">NotebookLM</button>
             </div>
             
-            <button onclick="openAll()" class="w-full py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-900 font-bold shadow-md transition flex items-center justify-center gap-2">
-                <i class="fas fa-rocket"></i> פתח את כל כלי המחקר במקביל
+            <button onclick="openAll()" class="w-full py-3 bg-sky-600 text-white rounded-xl hover:bg-sky-700 font-bold shadow-md transition flex items-center justify-center gap-2">
+                <i class="fas fa-external-link-alt"></i> פתח את כל הכלים במקביל
             </button>
         </main>
     </div>
 
     <script>
-        // === State Management ===
-        const STORAGE_KEY = 'deep_research_history_v2';
+        // === State ===
+        const STORAGE_KEY = 'clean_research_v3';
         let history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
         document.addEventListener('DOMContentLoaded', () => {
             renderHistory();
         });
 
-        // === The Engine ===
-        function generateTemplate() {
+        // === The Logic (Pure & Isolated) ===
+        function generateCleanPrompt() {
             const topic = document.getElementById('topic').value.trim();
-            const tone = document.getElementById('tone').value;
-            const format = document.getElementById('format').value;
             const output = document.getElementById('output');
 
             if (!topic) {
-                shakeInput();
+                alert('נא להזין נושא למחקר');
                 return;
             }
 
-            // === CRITICAL: HEBREW ENFORCEMENT TEMPLATE ===
-            const masterTemplate = `Act as an expert Deep Research Analyst with 20+ years of experience.
-I need you to perform a comprehensive deep dive into the following topic.
+            // תבנית הפרומפט - נקייה לחלוטין מהיסטוריה
+            // מבוססת על ההנחיות בקובץ "מחקר עומק" שצורף
+            const template = `You are an expert Deep Research Analyst with elite web-browsing capabilities.
+Your task is to conduct a comprehensive, high-quality deep dive into the following topic:
 
-=========================================
-🎯 TOPIC: "${topic}"
-=========================================
+>> TOPIC: "${topic}" <<
 
-### 1. Research Objectives
-- Define core concepts, terminology, and key stakeholders.
-- Identify historical context, current trends, and future projections.
-- Uncover hidden connections, controversies, and counter-intuitive facts.
+### Core Instructions (Web-Based Research):
+1. **Credibility First:** Rely only on high-authority, reliable sources. Verify facts across multiple sources.
+2. **Comprehensive Coverage:** Cover historical context, current state (2024-2025), and future projections.
+3. **Data & Trends:** Look for specific statistics, market trends, and significant shifts.
+4. **Timeframes:** Clearly indicate the relevant time periods for the data you find.
 
-### 2. Output Requirements
-- **Format:** ${format}
-- **Tone:** ${tone}
-- **Depth:** High information density, minimal fluff.
+### Output Requirements:
+- **Language:** The research may be conducted in any language, but the **FINAL OUTPUT MUST BE IN HEBREW (עברית)**.
+- **Structure:** Use clear headings, bullet points, and a professional layout.
+- **Accessibility:** Explain complex concepts in simple, accessible language (Professional yet clear).
 
-### 3. CRITICAL INSTRUCTION: LANGUAGE
-**YOU MUST WRITE THE FINAL OUTPUT ENTIRELY IN HEBREW (עברית).**
-You may perform the research in any language to find the best sources, but the final report MUST be in Hebrew.
-Ensure the Hebrew is natural, professional, and grammatically correct.
+### Execution Plan:
+- Step 1: Broad search to understand the landscape.
+- Step 2: Deep dive into specific sub-topics and controversies.
+- Step 3: Synthesis of information into a coherent report in Hebrew.
 
-### 4. Special Instructions
-- Search for the most recent developments (2024-2025).
-- Include credible sources where possible.
-- Conclude with 3 actionable insights (in Hebrew).
+**Final Note:** Do not limit yourself. If you find related tangents or crucial information that I didn't explicitly ask for but is relevant to a complete understanding of the topic, please include it. Give yourself the freedom to explore and bring the best possible insights.`;
 
-Please start your research now.`;
-
-            output.value = masterTemplate;
+            output.value = template;
             output.scrollTop = 0;
             
-            addToHistory(topic, tone, format, masterTemplate);
-            
-            const btn = document.querySelector('button[onclick="generateTemplate()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i> הפרומפט נוצר!';
-            setTimeout(() => btn.innerHTML = originalText, 1500);
+            addToHistory(topic, template);
         }
 
-        // === History Functions ===
-        function addToHistory(topic, tone, format, fullPrompt) {
+        // === Utilities ===
+        function addToHistory(topic, prompt) {
             const newItem = {
                 id: Date.now(),
                 topic,
-                tone,
-                format,
-                fullPrompt,
+                prompt,
                 date: new Date().toLocaleDateString('he-IL')
             };
             history.unshift(newItem);
-            if(history.length > 20) history.pop();
+            if(history.length > 15) history.pop(); // Limit history
             localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
             renderHistory();
         }
@@ -246,31 +200,27 @@ Please start your research now.`;
             document.getElementById('historyCount').innerText = history.length;
             
             if (history.length === 0) {
-                list.innerHTML = '<div class="text-center text-slate-400 text-sm mt-10"><i class="far fa-folder-open text-2xl mb-2"></i><br>אין היסטוריה עדיין</div>';
+                list.innerHTML = '<div class="text-center text-slate-400 text-sm mt-10">אין היסטוריה עדיין</div>';
                 return;
             }
 
             list.innerHTML = history.map(item => `
-                <div onclick="loadFromHistory(${item.id})" class="history-item p-3 cursor-pointer rounded-lg bg-white border border-slate-100 shadow-sm mb-2 animate-fade-in group">
-                    <div class="font-bold text-slate-700 text-sm truncate" title="${item.topic}">${item.topic}</div>
-                    <div class="text-xs text-slate-400 flex justify-between mt-1">
-                        <span>${item.date}</span>
-                        <span class="group-hover:text-blue-500 text-slate-300"><i class="fas fa-chevron-left"></i></span>
-                    </div>
+                <div onclick="loadItem(${item.id})" class="history-item p-3 cursor-pointer rounded-lg bg-white border border-slate-100 shadow-sm mb-2 group">
+                    <div class="font-bold text-slate-700 text-sm truncate">${item.topic}</div>
+                    <div class="text-xs text-slate-400 mt-1">${item.date}</div>
                 </div>
             `).join('');
         }
 
-        function loadFromHistory(id) {
+        function loadItem(id) {
             const item = history.find(h => h.id === id);
             if (!item) return;
             document.getElementById('topic').value = item.topic;
-            // Note: We don't restore select values perfectly if they changed, but we restore the prompt
-            document.getElementById('output').value = item.fullPrompt;
+            document.getElementById('output').value = item.prompt;
         }
 
         function clearHistory() {
-            if(confirm("למחוק את כל ההיסטוריה?")) {
+            if(confirm("למחוק היסטוריה?")) {
                 history = [];
                 localStorage.removeItem(STORAGE_KEY);
                 renderHistory();
@@ -282,29 +232,25 @@ Please start your research now.`;
             if(!el.value) return;
             el.select();
             navigator.clipboard.writeText(el.value).then(() => {
-                const btn = document.querySelector('button[onclick="copyText()"]');
-                const original = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-check"></i> הועתק!';
-                btn.classList.add('bg-green-50', 'text-green-600', 'border-green-200');
-                setTimeout(() => {
-                    btn.innerHTML = original;
-                    btn.classList.remove('bg-green-50', 'text-green-600', 'border-green-200');
-                }, 1500);
+                alert('הועתק ללוח!');
             });
         }
 
         function openLink(url) { window.open(url, '_blank'); }
 
         function openAll() {
-            const urls = ['https://claude.ai/new', 'https://gemini.google.com/app', 'https://chatgpt.com/', 'https://www.genspark.ai/', 'https://grok.com/', 'https://www.perplexity.ai/'];
-            if(confirm("לפתוח 6 לשוניות חדשות?")) urls.forEach(url => window.open(url, '_blank'));
-        }
-
-        function shakeInput() {
-            const el = document.getElementById('topic');
-            el.classList.add('ring-2', 'ring-red-400', 'border-red-400');
-            setTimeout(() => el.classList.remove('ring-2', 'ring-red-400', 'border-red-400'), 500);
-            el.focus();
+            const urls = [
+                'https://claude.ai/new', 
+                'https://gemini.google.com/app', 
+                'https://chatgpt.com/', 
+                'https://www.genspark.ai/', 
+                'https://grok.com/',
+                'https://notebooklm.google.com/',
+                'https://www.perplexity.ai/'
+            ];
+            if(confirm("זה יפתח 7 לשוניות במקביל. להמשיך?")) {
+                urls.forEach(url => window.open(url, '_blank'));
+            }
         }
     </script>
 </body>
