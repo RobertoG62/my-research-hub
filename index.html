@@ -3,255 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Research Hub 3.0 | Clean Edition</title>
+    <title>Deep Research Hub 4.0 | Ultimate Edition</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
-                    },
-                    fontFamily: { sans: ['Rubik', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
 
     <style>
-        body { font-family: 'Rubik', sans-serif; background: #f8fafc; }
+        body { font-family: 'Rubik', sans-serif; background: #f0f4f8; }
+        
+        /* Glassmorphism Styles */
         .glass-panel {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
         }
-        .history-item { transition: all 0.2s; border-right: 3px solid transparent; }
-        .history-item:hover { background: #f1f5f9; border-right-color: #0ea5e9; }
+        
+        .gradient-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f1f1; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Animations */
+        .animate-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* Focus Animation */
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
-        }
-        .pulse-focus:focus { animation: pulse-ring 1s cubic-bezier(0.4, 0, 0.6, 1); }
+        .pulse-focus:focus { box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2); }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col">
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
 
-    <header class="bg-slate-900 text-white p-4 shadow-lg sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-sky-600 p-2 rounded-lg shadow-inner"><i class="fas fa-search-location text-xl"></i></div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-wide">Deep Research Hub <span class="text-sky-400 text-sm font-normal">v3.0 Clean</span></h1>
-                    <p class="text-slate-400 text-xs">מחולל פרומפטים סטרילי ומקצועי</p>
-                </div>
-            </div>
-            <div class="flex gap-3 text-sm">
-                <div class="px-3 py-1 bg-slate-800 rounded-full border border-slate-700">
-                    <span id="historyCount">0</span> מחקרים בארכיון
-                </div>
-                <button onclick="clearHistory()" class="text-slate-400 hover:text-red-400 transition" title="נקה היסטוריה">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
-        </div>
-    </header>
+    <div id="root" class="h-full flex flex-col"></div>
 
-    <div class="flex-1 max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
-        <aside class="lg:col-span-3 glass-panel rounded-2xl p-4 flex flex-col h-[calc(100vh-140px)] sticky top-24">
-            <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2">
-                <i class="fas fa-history text-sky-500"></i> מחקרים אחרונים
-            </h3>
-            <div id="historyList" class="flex-1 overflow-y-auto space-y-2 pr-1">
-                <div class="text-center text-slate-400 text-sm mt-10">ההיסטוריה ריקה</div>
-            </div>
-        </aside>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-        <main class="lg:col-span-9 space-y-6">
-            
-            <div class="glass-panel rounded-2xl p-6 md:p-8">
-                <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-                    <span class="bg-sky-100 text-sky-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
-                    <h2 class="text-xl font-bold text-slate-800">הגדרת נושא המחקר</h2>
-                </div>
+        // --- Icons ---
+        const Icons = {
+            Brain: () => <i className="fas fa-brain"></i>,
+            Search: () => <i className="fas fa-search"></i>,
+            Sparkles: () => <i className="fas fa-wand-magic-sparkles"></i>,
+            Copy: () => <i className="far fa-copy"></i>,
+            Check: () => <i className="fas fa-check"></i>,
+            History: () => <i className="fas fa-history"></i>,
+            Trash: () => <i className="fas fa-trash-alt"></i>,
+            External: () => <i className="fas fa-external-link-alt"></i>,
+            Back: () => <i className="fas fa-arrow-right"></i>,
+            Send: () => <i className="fas fa-paper-plane"></i>
+        };
 
-                <div class="grid grid-cols-1 gap-6 mb-4">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">מה הנושא שברצונך לחקור?</label>
-                        <textarea id="topic" rows="3" 
-                            class="w-full p-4 bg-white border border-slate-300 rounded-xl focus:border-sky-500 focus:ring-2 focus:ring-sky-100 outline-none transition text-lg shadow-sm pulse-focus"
-                            placeholder="לדוגמה: השפעת מחשוב קוונטי על אבטחת מידע בנקאית..."></textarea>
-                    </div>
-                </div>
-                
-                <button onclick="generateCleanPrompt()" 
-                    class="w-full mt-2 bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-2 text-lg">
-                    <i class="fas fa-microchip"></i>
-                    צור פרומפט מחקר (נקי ומקצועי)
-                </button>
-            </div>
+        // --- Tool Links ---
+        const AI_TOOLS = [
+            { id: 'claude', name: 'Claude', url: 'https://claude.ai/new', color: 'hover:border-orange-500', icon: '🤖' },
+            { id: 'gemini', name: 'Gemini', url: 'https://gemini.google.com/app', color: 'hover:border-blue-500', icon: '💎' },
+            { id: 'chatgpt', name: 'ChatGPT', url: 'https://chatgpt.com/', color: 'hover:border-green-500', icon: '🌀' },
+            { id: 'perplexity', name: 'Perplexity', url: 'https://www.perplexity.ai/', color: 'hover:border-teal-500', icon: '🔎' },
+            { id: 'notebooklm', name: 'NotebookLM', url: 'https://notebooklm.google.com/', color: 'hover:border-purple-500', icon: '📓' },
+            { id: 'grok', name: 'Grok', url: 'https://grok.com/', color: 'hover:border-gray-800', icon: '🚀' },
+            { id: 'genspark', name: 'GenSpark', url: 'https://www.genspark.ai/', color: 'hover:border-yellow-500', icon: '⚡' }
+        ];
 
-            <div class="glass-panel rounded-2xl p-6 md:p-8 flex flex-col h-[600px]">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
-                    <div class="flex items-center gap-3">
-                        <span class="bg-green-100 text-green-700 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
-                        <h2 class="text-xl font-bold text-slate-800">הפרומפט המוכן (להעתקה)</h2>
-                    </div>
-                    <button onclick="copyText()" class="text-sky-600 hover:bg-sky-50 px-4 py-2 rounded-lg transition font-bold flex items-center gap-2 border border-sky-100">
-                        <i class="far fa-copy"></i> העתק ללוח
-                    </button>
-                </div>
-                
-                <textarea id="output" readonly 
-                    class="flex-1 w-full p-5 bg-slate-50 border border-slate-200 rounded-xl font-mono text-sm leading-relaxed resize-none focus:outline-none text-slate-700 dir-ltr"
-                    placeholder="הפרומפט יופיע כאן..."></textarea>
-            </div>
+        // --- Main App ---
+        const App = () => {
+            // State
+            const [step, setStep] = useState(1);
+            const [history, setHistory] = useState([]);
+            const [isGenerating, setIsGenerating] = useState(false);
+            const [generatedPrompt, setGeneratedPrompt] = useState('');
+            const [copied, setCopied] = useState(false);
 
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                <button onclick="openLink('https://claude.ai/new')" class="p-3 bg-white border rounded-xl hover:border-orange-500 font-bold text-slate-600 shadow-sm">Claude</button>
-                <button onclick="openLink('https://gemini.google.com/app')" class="p-3 bg-white border rounded-xl hover:border-blue-500 font-bold text-slate-600 shadow-sm">Gemini</button>
-                <button onclick="openLink('https://chatgpt.com/')" class="p-3 bg-white border rounded-xl hover:border-green-500 font-bold text-slate-600 shadow-sm">ChatGPT</button>
-                <button onclick="openLink('https://www.perplexity.ai/')" class="p-3 bg-white border rounded-xl hover:border-teal-500 font-bold text-slate-600 shadow-sm">Perplexity</button>
-                <button onclick="openLink('https://grok.com/')" class="p-3 bg-white border rounded-xl hover:border-gray-800 font-bold text-slate-600 shadow-sm">Grok</button>
-                <button onclick="openLink('https://notebooklm.google.com/')" class="p-3 bg-white border rounded-xl hover:border-yellow-500 font-bold text-slate-600 shadow-sm">NotebookLM</button>
-            </div>
-            
-            <button onclick="openAll()" class="w-full py-3 bg-sky-600 text-white rounded-xl hover:bg-sky-700 font-bold shadow-md transition flex items-center justify-center gap-2">
-                <i class="fas fa-external-link-alt"></i> פתח את כל הכלים במקביל
-            </button>
-        </main>
-    </div>
-
-    <script>
-        // === State ===
-        const STORAGE_KEY = 'clean_research_v3';
-        let history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
-        document.addEventListener('DOMContentLoaded', () => {
-            renderHistory();
-        });
-
-        // === The Logic (Pure & Isolated) ===
-        function generateCleanPrompt() {
-            const topic = document.getElementById('topic').value.trim();
-            const output = document.getElementById('output');
-
-            if (!topic) {
-                alert('נא להזין נושא למחקר');
-                return;
-            }
-
-            // תבנית הפרומפט - נקייה לחלוטין מהיסטוריה
-            // מבוססת על ההנחיות בקובץ "מחקר עומק" שצורף
-            const template = `You are an expert Deep Research Analyst with elite web-browsing capabilities.
-Your task is to conduct a comprehensive, high-quality deep dive into the following topic:
-
->> TOPIC: "${topic}" <<
-
-### Core Instructions (Web-Based Research):
-1. **Credibility First:** Rely only on high-authority, reliable sources. Verify facts across multiple sources.
-2. **Comprehensive Coverage:** Cover historical context, current state (2024-2025), and future projections.
-3. **Data & Trends:** Look for specific statistics, market trends, and significant shifts.
-4. **Timeframes:** Clearly indicate the relevant time periods for the data you find.
-
-### Output Requirements:
-- **Language:** The research may be conducted in any language, but the **FINAL OUTPUT MUST BE IN HEBREW (עברית)**.
-- **Structure:** Use clear headings, bullet points, and a professional layout.
-- **Accessibility:** Explain complex concepts in simple, accessible language (Professional yet clear).
-
-### Execution Plan:
-- Step 1: Broad search to understand the landscape.
-- Step 2: Deep dive into specific sub-topics and controversies.
-- Step 3: Synthesis of information into a coherent report in Hebrew.
-
-**Final Note:** Do not limit yourself. If you find related tangents or crucial information that I didn't explicitly ask for but is relevant to a complete understanding of the topic, please include it. Give yourself the freedom to explore and bring the best possible insights.`;
-
-            output.value = template;
-            output.scrollTop = 0;
-            
-            addToHistory(topic, template);
-        }
-
-        // === Utilities ===
-        function addToHistory(topic, prompt) {
-            const newItem = {
-                id: Date.now(),
-                topic,
-                prompt,
-                date: new Date().toLocaleDateString('he-IL')
-            };
-            history.unshift(newItem);
-            if(history.length > 15) history.pop(); // Limit history
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-            renderHistory();
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('historyList');
-            document.getElementById('historyCount').innerText = history.length;
-            
-            if (history.length === 0) {
-                list.innerHTML = '<div class="text-center text-slate-400 text-sm mt-10">אין היסטוריה עדיין</div>';
-                return;
-            }
-
-            list.innerHTML = history.map(item => `
-                <div onclick="loadItem(${item.id})" class="history-item p-3 cursor-pointer rounded-lg bg-white border border-slate-100 shadow-sm mb-2 group">
-                    <div class="font-bold text-slate-700 text-sm truncate">${item.topic}</div>
-                    <div class="text-xs text-slate-400 mt-1">${item.date}</div>
-                </div>
-            `).join('');
-        }
-
-        function loadItem(id) {
-            const item = history.find(h => h.id === id);
-            if (!item) return;
-            document.getElementById('topic').value = item.topic;
-            document.getElementById('output').value = item.prompt;
-        }
-
-        function clearHistory() {
-            if(confirm("למחוק היסטוריה?")) {
-                history = [];
-                localStorage.removeItem(STORAGE_KEY);
-                renderHistory();
-            }
-        }
-
-        function copyText() {
-            const el = document.getElementById('output');
-            if(!el.value) return;
-            el.select();
-            navigator.clipboard.writeText(el.value).then(() => {
-                alert('הועתק ללוח!');
+            // Form State
+            const [formData, setFormData] = useState({
+                topic: '',
+                goal: 'learning',
+                depth: 'comprehensive',
+                context: '',
+                sources: true,
+                platform: 'general'
             });
-        }
 
-        function openLink(url) { window.open(url, '_blank'); }
+            // Load History on Mount
+            useEffect(() => {
+                const saved = localStorage.getItem('deep_research_hub_v4');
+                if (saved) setHistory(JSON.parse(saved));
+            }, []);
 
-        function openAll() {
-            const urls = [
-                'https://claude.ai/new', 
-                'https://gemini.google.com/app', 
-                'https://chatgpt.com/', 
-                'https://www.genspark.ai/', 
-                'https://grok.com/',
-                'https://notebooklm.google.com/',
-                'https://www.perplexity.ai/'
-            ];
-            if(confirm("זה יפתח 7 לשוניות במקביל. להמשיך?")) {
-                urls.forEach(url => window.open(url, '_blank'));
-            }
-        }
+            // Save History Logic
+            const saveToHistory = (topic, prompt) => {
+                const newItem = {
+                    id: Date.now(),
+                    topic,
+                    prompt,
+                    date: new Date().toLocaleDateString('he-IL')
+                };
+                const newHistory = [newItem, ...history].slice(0, 20); // Keep last 20
+                setHistory(newHistory);
+                localStorage.setItem('deep_research_hub_v4', JSON.stringify(newHistory));
+            };
+
+            // Prompt Generation Logic (From V1)
+            const generatePrompt = () => {
+                setIsGenerating(true);
+                setTimeout(() => {
+                    const prompt = constructPrompt(formData);
+                    setGeneratedPrompt(prompt);
+                    saveToHistory(formData.topic, prompt);
+                    setIsGenerating(false);
+                    setStep(3);
+                }, 1000);
+            };
+
+            const constructPrompt = (data) => {
+                let roleDefinition = `You are an expert Deep Research Analyst. Your task is to conduct a comprehensive, high-quality deep dive into the following topic.`;
+                
+                let goalDesc = "";
+                switch(data.goal) {
+                    case 'decision': goalDesc = "Goal: To facilitate informed decision-making based on data."; break;
+                    case 'writing': goalDesc = "Goal: To create a knowledge base for a comprehensive article or professional report."; break;
+                    case 'creative': goalDesc = "Goal: To gain inspiration and innovative ideas based on current trends."; break;
+                    default: goalDesc = "Goal: To learn the topic in the best, most comprehensive way possible.";
+                }
+
+                let depthDesc = "";
+                switch(data.depth) {
+                    case 'academic': depthDesc = "Tone & Depth: Use professional terminology, focus on academic studies and empirical data."; break;
+                    case 'expert': depthDesc = "Tone & Depth: Expert-level analysis, including subtle nuances and edge cases."; break;
+                    default: depthDesc = "Tone & Depth: Comprehensive overview covering both basics and advanced aspects."; break;
+                }
+
+                return `
+*** DEEP RESEARCH PROMPT ***
+
+**Role:** ${roleDefinition}
+
+**TOPIC:** "${data.topic}"
+
+**CONTEXT:**
+${goalDesc}
+${data.context ? `Additional Context: ${data.context}` : ''}
+${depthDesc}
+
+**INSTRUCTIONS:**
+1. **Credibility First:** Rely only on high-authority sources. Verify facts.
+2. **Structure:** Provide an Executive Summary followed by a Deep Dive.
+3. **Data:** Look for specific statistics, market trends, and significant shifts (2024-2025).
+4. **Format:** The output MUST be in HEBREW (עברית), organized with clear headings and bullet points.
+5. **Tools:** ${data.platform === 'notebooklm' ? 'Optimize output for NotebookLM ingestion (clear structure, high density).' : 'Utilize your full search capabilities.'}
+
+**EXECUTION:**
+Start by outlining the key areas you will investigate. If any critical info is missing to start, ask me ONE clarifying question. Otherwise, proceed immediately to the research report.
+`.trim();
+            };
+
+            // Handlers
+            const handleInputChange = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const loadFromHistory = (item) => {
+                setFormData(prev => ({ ...prev, topic: item.topic }));
+                setGeneratedPrompt(item.prompt);
+                setStep(3);
+            };
+
+            const clearHistory = () => {
+                if(confirm("למחוק את כל ההיסטוריה?")) {
+                    setHistory([]);
+                    localStorage.removeItem('deep_research_hub_v4');
+                }
+            };
+
+            const copyToClipboard = () => {
+                navigator.clipboard.writeText(generatedPrompt);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            const openTool = (url) => window.open(url, '_blank');
+            
+            const openAllTools = () => {
+                if(confirm("פעולה זו תפתח 7 לשוניות חדשות. להמשיך?")) {
+                    AI_TOOLS.forEach(tool => window.open(tool.url, '_blank'));
+                }
+            };
+
+            // --- UI Components ---
+
+            return (
+                <div className="flex h-full flex-col">
+                    {/* Header */}
+                    <header className="gradient-header text-white p-4 shadow-lg z-20 shrink-0">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-sky-500/20 p-2 rounded-lg backdrop-blur-sm border border-sky-500/30">
+                                    <Icons.Brain />
+                                </div>
+                                <div>
+                                    <h1 className="text-xl font-bold tracking-wide">Deep Research Hub <span className="text-sky-400 text-sm font-normal">4.0 Ultimate</span></h1>
+                                    <p className="text-slate-400 text-xs">מנוע מחקר עומק משולב AI</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-3 text-sm items-center">
+                                <span className="bg-slate-800 px-3 py-1 rounded-full border border-slate-700 text-xs text-slate-300">
+                                    {history.length} מחקרים בארכיון
+                                </span>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div className="flex-1 flex overflow-hidden max-w-7xl mx-auto w-full">
+                        
+                        {/* Sidebar (History) */}
+                        <aside className="w-80 glass-panel border-r border-slate-200 hidden md:flex flex-col z-10 m-4 rounded-2xl overflow-hidden">
+                            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-white/50">
+                                <h3 className="font-bold text-slate-700 flex items-center gap-2">
+                                    <Icons.History /> מחקרים אחרונים
+                                </h3>
+                                <button onClick={clearHistory} className="text-slate-400 hover:text-red-500 transition" title="נקה היסטוריה">
+                                    <Icons.Trash />
+                                </button>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                                {history.length === 0 ? (
+                                    <div className="text-center text-slate-400 text-sm mt-10">ההיסטוריה ריקה</div>
+                                ) : (
+                                    history.map(item => (
+                                        <div key={item.id} onClick={() => loadFromHistory(item)} 
+                                             className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm cursor-pointer hover:border-sky-500 hover:shadow-md transition group">
+                                            <div className="font-medium text-slate-800 text-sm truncate">{item.topic}</div>
+                                            <div className="text-xs text-slate-400 mt-1 flex justify-between">
+                                                <span>{item.date}</span>
+                                                <span className="opacity-0 group-hover:opacity-100 text-sky-500"><Icons.Back /></span>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </aside>
+
+                        {/* Main Content Area */}
+                        <main className="flex-1 overflow-y-auto p-4 md:p-6 scroll-smooth">
+                            
+                            {/* STEP 1: Topic */}
+                            {step === 1 && (
+                                <div className="animate-in max-w-2xl mx-auto mt-10">
+                                    <div className="glass-panel rounded-2xl p-8 md:p-12 shadow-xl text-center">
+                                        <div className="w-20 h-20 bg-sky-100 text-sky-600 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
+                                            <Icons.Search />
+                                        </div>
+                                        <h2 className="text-3xl font-bold text-slate-800 mb-2">מה תרצה לחקור היום?</h2>
+                                        <p className="text-slate-500 mb-8 max-w-md mx-auto">
+                                            המערכת תעזור לך ליצור פרומפט מדויק ותקשר אותך לכל כלי המחקר המובילים.
+                                        </p>
+                                        
+                                        <div className="relative max-w-xl mx-auto">
+                                            <input 
+                                                type="text" 
+                                                value={formData.topic}
+                                                onChange={(e) => handleInputChange('topic', e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && formData.topic && setStep(2)}
+                                                placeholder="נושא המחקר שלך..." 
+                                                className="w-full p-4 pr-12 text-lg rounded-xl border-2 border-slate-200 focus:border-sky-500 focus:ring-4 focus:ring-sky-100 outline-none transition pulse-focus shadow-sm"
+                                            />
+                                            <button 
+                                                onClick={() => formData.topic && setStep(2)}
+                                                disabled={!formData.topic}
+                                                className={`absolute left-2 top-2 bottom-2 px-6 rounded-lg font-bold transition-all flex items-center gap-2 ${formData.topic ? 'bg-sky-600 text-white hover:bg-sky-700 shadow-md' : 'bg-slate-100 text-slate-300'}`}
+                                            >
+                                                המשך <Icons.Back />
+                                            </button>
+                                        </div>
+
+                                        <div className="mt-8 flex justify-center gap-3 text-sm text-slate-400">
+                                            <span>נסה: מחשוב קוונטי</span> • <span>מגמות נדל"ן 2025</span> • <span>היסטוריה של ה-AI</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* STEP 2: Refine */}
+                            {step === 2 && (
+                                <div className="animate-in max-w-3xl mx-auto">
+                                    <div className="glass-panel rounded-2xl overflow-hidden shadow-xl">
+                                        <div className="bg-slate-50 p-6 border-b border-slate-100 flex justify-between items-center">
+                                            <div>
+                                                <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                                    <span className="text-sky-500"><Icons.Sparkles /></span> דיוק המחקר
+                                                </h3>
+                                                <p className="text-sm text-slate-500">עבור: {formData.topic}</p>
+                                            </div>
+                                            <button onClick={() => setStep(1)} className="text-sm text-slate-500 hover:text-sky-600">חזרה לשלב 1</button>
+                                        </div>
+
+                                        <div className="p-8 space-y-6">
+                                            {/* Goal */}
+                                            <div>
+                                                <label className="block text-sm font-bold text-slate-700 mb-2">מטרת המחקר</label>
+                                                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                                    {[
+                                                        {id: 'learning', label: 'למידה', icon: '📚'},
+                                                        {id: 'decision', label: 'החלטה', icon: '⚖️'},
+                                                        {id: 'writing', label: 'כתיבה', icon: '✍️'},
+                                                        {id: 'creative', label: 'השראה', icon: '💡'}
+                                                    ].map(opt => (
+                                                        <button
+                                                            key={opt.id}
+                                                            onClick={() => handleInputChange('goal', opt.id)}
+                                                            className={`p-3 rounded-xl border text-center transition-all ${formData.goal === opt.id ? 'border-sky-500 bg-sky-50 text-sky-700 font-bold shadow-sm' : 'border-slate-200 hover:bg-slate-50 text-slate-600'}`}
+                                                        >
+                                                            <div className="text-xl mb-1">{opt.icon}</div>
+                                                            <div className="text-sm">{opt.label}</div>
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Depth & Context */}
+                                            <div className="grid md:grid-cols-2 gap-6">
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-2">עומק וסגנון</label>
+                                                    <select 
+                                                        value={formData.depth}
+                                                        onChange={(e) => handleInputChange('depth', e.target.value)}
+                                                        className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:border-sky-500 outline-none"
+                                                    >
+                                                        <option value="comprehensive">מקיף ומקצועי (מומלץ)</option>
+                                                        <option value="basic">בסיסי ופשוט (ELI5)</option>
+                                                        <option value="academic">אקדמי ומחקרי</option>
+                                                        <option value="expert">רמת מומחה (ניואנסים)</option>
+                                                    </select>
+                                                </div>
+                                                <div>
+                                                    <label className="block text-sm font-bold text-slate-700 mb-2">הקשר נוסף (אופציונלי)</label>
+                                                    <input 
+                                                        type="text" 
+                                                        value={formData.context}
+                                                        onChange={(e) => handleInputChange('context', e.target.value)}
+                                                        placeholder="למשל: התמקד בשוק הישראלי..."
+                                                        className="w-full p-3 bg-white border border-slate-200 rounded-xl focus:border-sky-500 outline-none"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Generate Button */}
+                                            <button 
+                                                onClick={generatePrompt}
+                                                disabled={isGenerating}
+                                                className="w-full mt-4 bg-slate-900 hover:bg-slate-800 text-white font-bold py-4 rounded-xl shadow-lg transition transform active:scale-[0.99] flex items-center justify-center gap-3 text-lg"
+                                            >
+                                                {isGenerating ? (
+                                                    <><i className="fas fa-circle-notch fa-spin"></i> מעבד נתונים...</>
+                                                ) : (
+                                                    <><Icons.Brain /> צור פרומפט חכם</>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* STEP 3: Results & Tools */}
+                            {step === 3 && (
+                                <div className="animate-in max-w-5xl mx-auto space-y-6">
+                                    
+                                    {/* The Prompt */}
+                                    <div className="glass-panel rounded-2xl overflow-hidden shadow-xl flex flex-col md:flex-row h-[500px]">
+                                        <div className="flex-1 flex flex-col relative">
+                                            <div className="bg-emerald-50 p-4 border-b border-emerald-100 flex justify-between items-center">
+                                                <h3 className="font-bold text-emerald-800 flex items-center gap-2">
+                                                    <span className="bg-emerald-200 p-1 rounded-md"><Icons.Check /></span> הפרומפט מוכן
+                                                </h3>
+                                                <button onClick={() => {setStep(1); setFormData({...formData, topic: ''});}} className="text-xs font-bold text-emerald-700 hover:underline">
+                                                    מחקר חדש
+                                                </button>
+                                            </div>
+                                            <textarea 
+                                                value={generatedPrompt}
+                                                readOnly
+                                                className="flex-1 w-full p-6 text-slate-700 font-mono text-sm leading-relaxed outline-none resize-none bg-white/50 dir-ltr"
+                                            ></textarea>
+                                            <div className="p-4 bg-white border-t border-slate-100 flex justify-end">
+                                                <button 
+                                                    onClick={copyToClipboard}
+                                                    className={`px-6 py-2 rounded-lg font-bold flex items-center gap-2 transition ${copied ? 'bg-emerald-500 text-white' : 'bg-slate-800 text-white hover:bg-slate-700'}`}
+                                                >
+                                                    {copied ? <Icons.Check /> : <Icons.Copy />}
+                                                    {copied ? 'הועתק!' : 'העתק ללוח'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* The Tools Deck */}
+                                    <div className="glass-panel rounded-2xl p-6 md:p-8 shadow-lg">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                                <Icons.External /> בחר כלי למחקר
+                                            </h3>
+                                            <button onClick={openAllTools} className="text-sm font-bold text-sky-600 hover:bg-sky-50 px-3 py-1 rounded-lg border border-sky-100 transition">
+                                                פתח את כולם במקביל 🚀
+                                            </button>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                                            {AI_TOOLS.map(tool => (
+                                                <button 
+                                                    key={tool.id}
+                                                    onClick={() => openTool(tool.url)}
+                                                    className={`flex flex-col items-center justify-center p-4 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all group ${tool.color} hover:border-t-4`}
+                                                >
+                                                    <div className="text-2xl mb-2 grayscale group-hover:grayscale-0 transition duration-300">{tool.icon}</div>
+                                                    <div className="font-bold text-slate-700 text-sm">{tool.name}</div>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        
+                                        <div className="mt-6 bg-slate-50 p-4 rounded-xl border border-slate-200 text-sm text-slate-600 flex items-start gap-3">
+                                            <div className="text-sky-500 mt-1"><Icons.Sparkles /></div>
+                                            <div>
+                                                <strong>טיפ למקצוענים:</strong> עבור מחקר מסמכים, השתמש ב-<strong>NotebookLM</strong>. עבור מידע בזמן אמת, השתמש ב-<strong>Perplexity</strong> או <strong>Gemini</strong>. עבור כתיבה ויצירתיות, <strong>Claude</strong> הוא המומלץ.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            )}
+
+                        </main>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
