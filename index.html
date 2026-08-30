@@ -5,15 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deep Research Hub 4.0 | Ultimate Edition</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Everything below is served from this site. It used to come from three
+         separate third parties on every load - Tailwind's CDN, unpkg and
+         cdnjs - each of which learned the visitor's IP address before the
+         page rendered. React and Babel were also requested with floating
+         tags, so the code running here could change without this repo
+         changing; they are pinned to what those tags resolved to. -->
+    <link rel="stylesheet" href="assets/css/tailwind.css">
+    <link rel="stylesheet" href="assets/fonts/fonts.css">
+    <link rel="stylesheet" href="assets/vendor/fontawesome/fontawesome.min.css">
+
+    <script src="vendor/react.production.min.js"></script>
+    <script src="vendor/react-dom.production.min.js"></script>
+    <script src="vendor/babel.min.js"></script>
 
     <style>
         body { font-family: 'Rubik', sans-serif; background: #f0f4f8; }
@@ -212,7 +216,7 @@ Start by outlining the key areas you will investigate. If any critical info is m
                                 </div>
                                 <div>
                                     <h1 className="text-xl font-bold tracking-wide">Deep Research Hub <span className="text-sky-400 text-sm font-normal">4.0 Ultimate</span></h1>
-                                    <p className="text-slate-400 text-xs">מנוע מחקר עומק משולב AI</p>
+                                    <p className="text-slate-600 text-xs">מנוע מחקר עומק משולב AI</p>
                                 </div>
                             </div>
                             <div className="flex gap-3 text-sm items-center">
@@ -231,19 +235,19 @@ Start by outlining the key areas you will investigate. If any critical info is m
                                 <h3 className="font-bold text-slate-700 flex items-center gap-2">
                                     <Icons.History /> מחקרים אחרונים
                                 </h3>
-                                <button onClick={clearHistory} className="text-slate-400 hover:text-red-500 transition" title="נקה היסטוריה">
+                                <button onClick={clearHistory} className="text-slate-600 hover:text-red-500 transition" title="נקה היסטוריה">
                                     <Icons.Trash />
                                 </button>
                             </div>
                             <div className="flex-1 overflow-y-auto p-2 space-y-2">
                                 {history.length === 0 ? (
-                                    <div className="text-center text-slate-400 text-sm mt-10">ההיסטוריה ריקה</div>
+                                    <div className="text-center text-slate-600 text-sm mt-10">ההיסטוריה ריקה</div>
                                 ) : (
                                     history.map(item => (
                                         <div key={item.id} onClick={() => loadFromHistory(item)} 
                                              className="p-3 rounded-xl bg-white border border-slate-100 shadow-sm cursor-pointer hover:border-sky-500 hover:shadow-md transition group">
                                             <div className="font-medium text-slate-800 text-sm truncate">{item.topic}</div>
-                                            <div className="text-xs text-slate-400 mt-1 flex justify-between">
+                                            <div className="text-xs text-slate-600 mt-1 flex justify-between">
                                                 <span>{item.date}</span>
                                                 <span className="opacity-0 group-hover:opacity-100 text-sky-500"><Icons.Back /></span>
                                             </div>
@@ -286,7 +290,7 @@ Start by outlining the key areas you will investigate. If any critical info is m
                                             </button>
                                         </div>
 
-                                        <div className="mt-8 flex justify-center gap-3 text-sm text-slate-400">
+                                        <div className="mt-8 flex justify-center gap-3 text-sm text-slate-600">
                                             <span>נסה: מחשוב קוונטי</span> • <span>מגמות נדל"ן 2025</span> • <span>היסטוריה של ה-AI</span>
                                         </div>
                                     </div>
@@ -450,5 +454,10 @@ Start by outlining the key areas you will investigate. If any critical info is m
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
+<footer class="policy-links">
+  <p>נושאי המחקר נשמרים בדפדפן שלך בלבד. לחיצה על כלי AI מעבירה את הפרומפט לאותה חברה.</p>
+  <p><a href="privacy.html">מדיניות פרטיות</a> · <a href="terms.html">תנאי שימוש</a> · <a href="accessibility.html">הצהרת נגישות</a></p>
+</footer>
+<style>.policy-links{padding:20px 18px 28px;text-align:center;font-size:.8rem;line-height:1.85;color:#475569;background:#f1f5f9;border-top:1px solid #cbd5e1}.policy-links p{margin:0 0 5px;max-width:64ch;margin-inline:auto}.policy-links a{color:#1d4ed8;text-decoration:underline}</style>
 </body>
 </html>
